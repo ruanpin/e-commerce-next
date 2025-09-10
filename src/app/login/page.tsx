@@ -4,15 +4,13 @@ import { useState } from 'react'
 // import { useDispatch } from 'react-redux'
 // import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-// import { login } from '@/redux/slices/authSlice'
+import { useLoginMutation } from '@/redux/services/login'
 import MyInput, { MyPasswordInput } from "@/components/MyInput"
+import { UserLogin } from './type/login'
 
 export default function Login() {
-    interface userLogin {
-        email: string,
-        password: string
-    }
-    const [userLogin, setUserLogin] = useState<userLogin>({
+    const [login] = useLoginMutation();
+    const [userLogin, setUserLogin] = useState<UserLogin>({
         email: "",
         password: ""
     })
@@ -27,6 +25,15 @@ export default function Login() {
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { checked } = e.target
         setIsRemember(() => (checked))
+    }
+
+    const handleLogin = async() => {
+        try {
+            const result = await login(userLogin).unwrap();
+            console.log('login successful', result);
+        } catch (err) {
+            console.error('login failed', err);
+        }
     }
     return (
         <section className="flex items-center justify-center py-16 px-4">
@@ -81,6 +88,7 @@ export default function Login() {
                     <button
                         className="w-full bg-black text-white py-3 rounded-lg flex justify-center"
                         type="submit"
+                        onClick={handleLogin}
                     >
                         {
                             'Login'
